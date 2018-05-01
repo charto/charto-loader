@@ -1,0 +1,25 @@
+{
+  "name": "charto-loader",
+  "version": "0.1.0",
+  "description": "Loader tools for Charto style projects",
+  "main": "index.js",
+  "bin": {
+    "fixamd": "bin/fixamd"
+  },
+  "author": "Juha Järvi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charto/charto-loader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/charto/charto-loader/issues"
+  },
+  "homepage": "https://github.com/charto/charto-loader#readme",
+  "keywords": [
+    "dojo",
+    "loader",
+    "monaco",
+    "systemjs"
+  ]
+}
