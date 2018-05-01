@@ -1,9 +1,10 @@
 {
   "name": "charto-loader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Loader tools for Charto style projects",
-  "main": "index.js",
+  "main": "loader.js",
   "bin": {
+    "alleamd": "bin/alleamd",
     "fixamd": "bin/fixamd"
   },
   "author": "Juha Järvi",

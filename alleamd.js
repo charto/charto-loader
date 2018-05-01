@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 var name = process.argv[2];
-var codePath = process.argv[3] || require('path').join('packages', 'node_modules', name, 'dist', 'index-amd.js');
+var codePath = 'packages/node_modules/' + name + '/' + (process.argv[3] || 'dist/index-amd.js');
 var code = fs.readFileSync(codePath, { encoding: 'utf-8' });
 
 code = code.replace(/\"src\//g, '"' + name + '/');

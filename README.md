@@ -3,22 +3,24 @@
 This is a collection of loader scripts for Charto style projects:
 
 <dl>
-<dt>index.js</dt>
+<dt>loader.js</dt>
 <dd>For browsers, loads <a href="https://github.com/systemjs/systemjs">SystemJS</a>,
 <a href="https://github.com/dojo/dojo">Dojo 1.x</a> and
 <a href="https://github.com/Microsoft/monaco-editor">Monaco</a>.</dd>
 <dt>dojo-loader.js</dt>
 <dd>Minimal shim for loading Dojo using SystemJS.</dd>
 <dt>dojo-require.js</dt>
-<dd>Minimal shim used by dojo-loader to support `require` inside Dojo when bundled.</dd>
+<dd>Minimal shim used by dojo-loader to support <code>require</code> inside Dojo when bundled.</dd>
 <dt>fixamd.js</dt>
-<dd>Renames `src` to the package name in paths inside TypeScript-compiled AMD bundles.</dd>
+<dd>Renames <code>src</code> to the package name in paths inside TypeScript-compiled AMD bundles.</dd>
+<dt>alleamd.js</dt>
+<dd>Like <b>fixamd.js</b> but looks under <code>packages/node_modules/&lt;package name&gt;</code> to find the bundle.</dd>
 <dt>process.js</dt>
-<dd>Exports a Node.js `process` object with `NODE_ENV` set to `production`. Needed for example by React.</dd>
+<dd>Exports a Node.js <code>process</code> object with <code>NODE_ENV</code> set to <code>production</code>. Needed for example by React.</dd>
 <dt>process-dev.js</dt>
-<dd>Exports a Node.js `process` object with `NODE_ENV` set to `development`.</dd>
+<dd>Like <b>process.js</b> but <code>NODE_ENV</code> set to <code>development</code>.</dd>
 <dt>undefined.js</dt>
-<dd>Exports `undefined`, needed by Dojo when bundled.</dd>
+<dd>Exports <code>undefined</code>, needed for bundling Dojo.</dd>
 </dl>
 
 ## Usage
@@ -27,7 +29,7 @@ In HTML code you can put:
 
 ```HTML
 <html><head>
-<script src="https://unpkg.com/charto-loader@0.1.0/index.js"></script>
+<script src="https://unpkg.com/charto-loader@0.1.1/loader.js"></script>
 <script type="text/javascript">
 
 window.onload = function() {
@@ -51,17 +53,21 @@ window.onload = function() {
 To use `fixamd`, run the TypeScript compiler from `scripts` in `package.json` like:
 
 ```bash
-tsc -p src && fixamd my-project
+tsc && fixamd my-project ./index.js
 ```
 
 or:
 
 ```bash
-tsc && fixamd my-project ./index.js
+tsc -p src && fixamd my-project
 ```
 
-It will rename paths like `src/index` to `my-project/index` inside `./index.js`.
+It will rename paths like `src/file` to `my-project/file` inside `./index.js`.
 If the second argument is omitted, it defaults to `dist/index-amd.js`.
+
+For [alle](https://github.com/boennemann/alle) projects, use `alleamd` instead.
+Called like above, it would patch `packages/node_modules/my-project/index.js` or
+`packages/node_modules/my-project/dist/index-amd.js`.
 
 # License
 
