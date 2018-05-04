@@ -14,7 +14,7 @@ exports = {
 
 			// Map "has!condition?yes:no" tests using condition values listed above.
 			spec.source = spec.source.replace(/(['"])[^'"]+\/has!([^?'"]*)\?([^:'"]*):?([^'"]*)/g, function(match, quote, condition, yes, no) {
-				return(quote + ((config[condition] ? yes : no) || 'undefined'));
+				return(quote + ((config[condition] ? yes : no) || 'charto-loader/undefined'));
 			// Map "selector/loader!default" to "selector/lite.js".
 			}).replace(/(['"][^'"]+\/selector\/)_loader!([^'"]*)/, function(match, prefix) {
 				return(prefix + 'lite.js');

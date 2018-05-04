@@ -136,9 +136,11 @@ charto.initDojo = function() {
 		]
 	};
 
-	charto.preload.push(System.import('dojo').then(
-		function(dojo) { charto.dojo = dojo; }
-	));
+	charto.preload.push(function() {
+		return(System.import('dojo').then(
+			function(dojo) { charto.dojo = dojo; }
+		));
+	});
 };
 
 /** Start application, call after inits. */
@@ -149,7 +151,7 @@ charto.start = function(main) {
 	var bundleReady = charto.production ? System.import(charto.paths.bundle || 'dist/bundle') : Promise.reject();
 
 	var preloadReady = bundleReady.catch(function() {
-		return(Promise.all(charto.preload));
+		return(Promise.all(charto.preload.map(function(load) { return(load()); })));
 	});
 
 	// Load the app and print any errors.
@@ -164,6 +166,7 @@ charto.start = function(main) {
 charto.initDevelop = function(done) {
 	charto.initSystem(function() {
 		charto.initLoader();
-		charto.initMonaco().then(charto.initDojo).then(done);
+		charto.initDojo();
+		charto.initMonaco().then(done);
 	});
 };
