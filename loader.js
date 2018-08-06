@@ -80,6 +80,12 @@ charto.initLoader = function() {
 charto.initMonaco = function() {
 	var vsBase = 'node_modules/monaco-editor/min/';
 
+	Array.prototype.map.call(document.getElementsByTagName('link'), function(tag) {
+		if(tag.getAttribute('rel') == 'prefetch' && tag.getAttribute('href').match(/\.css$/)) {
+			tag.parentNode.removeChild(tag);
+		}
+	});
+
 	if(charto.production) {
 		vsBase = 'https://unpkg.com/monaco-editor@0.12.0/min/';
 
