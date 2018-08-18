@@ -2,10 +2,14 @@
   "name": "charto-loader",
   "version": "0.1.1",
   "description": "Loader tools for Charto style projects",
-  "main": "loader.js",
+  "main": "index.js",
+  "typings": "index.d.ts",
   "bin": {
     "alleamd": "bin/alleamd",
     "fixamd": "bin/fixamd"
+  },
+  "scripts": {
+    "prepublish": "node build.js"
   },
   "author": "Juha Järvi",
   "license": "MIT",
@@ -22,5 +26,8 @@
     "loader",
     "monaco",
     "systemjs"
-  ]
+  ],
+  "devDependencies": {
+    "uglify-js": "^3.4.7"
+  }
 }

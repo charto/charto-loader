@@ -10,61 +10,10 @@ var require;
 /** Dojo loader configuration. */
 var dojoConfig;
 
-/** SystemJS API. */
-var System;
-
-/** Storage for Monaco and Dojo loaders. */
-var charto = charto || {};
-
 /** List of packages to preload if a bundle is not available. */
 charto.preload = charto.preload || [];
 
 charto.paths = charto.paths || {};
-
-/** Initialize SystemJS. */
-
-charto.initSystem = function(done) {
-	// 1. Fetch SystemJS loader and Promise support.
-
-	loadSystem();
-
-	function loadSystem() {
-		charto.require([
-			'https://unpkg.com/systemjs@0.21.3/dist/system.js',
-			'https://unpkg.com/bluebird@3.5.1/js/browser/bluebird.core.min.js'
-		], loadConfig);
-	}
-
-	// 2. Fetch and apply SystemJS configuration.
-
-	function loadConfig() {
-		System.config({ baseURL: window.location.pathname.replace(/\/[^/]+/, '/') });
-		charto.require([
-			'config-npm.js',
-			'config.js'
-		], done);
-	}
-};
-
-/** Simplest possible script loader, for fetching better loaders. */
-
-charto.require = function(urls, done) {
-	var ref = document.getElementsByTagName('script')[0];
-	var loaded = 0;
-
-	urls.map(function(url) {
-		var script = document.createElement('script');
-
-		script.async = true;
-		script.onload = function() {
-			script.onload = null;
-			if(++loaded >= urls.length) done();
-		}
-
-		script.src = url;
-		ref.parentNode.insertBefore(script, ref);
-	});
-};
 
 /** Initialize AMD shim needed by Monaco and Dojo. */
 
@@ -87,15 +36,18 @@ charto.initMonaco = function() {
 	});
 
 	if(charto.production) {
-		vsBase = 'https://unpkg.com/monaco-editor@0.12.0/min/';
+//		vsBase = 'https://unpkg.com/monaco-editor@0.12.0/min/';
 
 		// Fix web worker cross origin issues.
+		charto.paths.monacoWorker = charto.paths.monacoWorker || 'vs/base/worker/workerMain.js';
+/*
 		window.MonacoEnvironment = { getWorkerUrl: function() {
 			return(URL.createObjectURL(new Blob([
 				'self.MonacoEnvironment = { baseUrl: "' + vsBase + '" };',
-				'importScripts("' + vsBase + (charto.paths.monacoWorker || 'vs/base/worker/workerMain.js') + '");'
+				'importScripts("' + vsBase + charto.paths.monacoWorker + '");'
 			], { type: 'text/javascript' })));
 		}};
+*/
 	}
 
 	require = {
@@ -124,8 +76,10 @@ charto.initMonaco = function() {
 
 	// Export Monaco to SystemJS modules.
 
+	charto.paths.monacoApi = charto.paths.monacoApi || 'vs/editor/editor.api';
+
 	System.registerDynamic('monaco-editor', [], false, function(require, exports, module) {
-		module.exports = charto.monaco.require(charto.paths.monacoApi || 'vs/editor/editor.api');
+		module.exports = charto.monaco.require(charto.paths.monacoApi);
 	});
 
 	return(System.import('vs/loader').then(loadMonaco));
@@ -151,10 +105,12 @@ charto.initDojo = function() {
 
 /** Start application, call after inits. */
 
-charto.start = function(main) {
+charto.start = function(main, bundle) {
 	/** Fetch entire bundled app if available, otherwise only what needs preloading. */
 
-	var bundleReady = charto.production ? System.import(charto.paths.bundle || 'dist/bundle') : Promise.reject();
+	charto.paths.bundle = charto.paths.bundle || bundle || 'dist/bundle';
+
+	var bundleReady = charto.production ? System.import(charto.paths.bundle) : Promise.reject();
 
 	var preloadReady = bundleReady.catch(function() {
 		return(Promise.all(charto.preload.map(function(load) { return(load()); })));
