@@ -1,4 +1,4 @@
-/// <reference path="types.d.ts" />
+/// <reference path="./lib/types.d.ts" />
 
 export interface SystemConfig {
 	map: { [name: string]: string };

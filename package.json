@@ -9,7 +9,7 @@
     "fixamd": "bin/fixamd"
   },
   "scripts": {
-    "prepublish": "node build.js"
+    "prepublish": "node lib/build.js"
   },
   "author": "Juha Järvi",
   "license": "MIT",
