@@ -1,0 +1,8 @@
+node_modules/
+*.min.js
+*.src.js
+package-lock.json
+*.lock
+*.log.*
+*.log
+*.tgz
