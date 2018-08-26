@@ -99,17 +99,19 @@ charto.initSystemTS = function(config, done) {
 		transpiler: 'plugin-typescript',
 
 		packages: {
-			'dist/': {
+			'dist': {
 				defaultExtension: 'js'
 			},
-			'src/': {
+			'src': {
 				defaultExtension: 'ts'
 			}
 		},
 
 		meta: {
+			'*.tsx': { defaultExtension: false },
 			'*.vert': { loader: 'systemjs-plugin-text' },
 			'*.frag': { loader: 'systemjs-plugin-text' },
+			'*.json': { loader: 'systemjs-plugin-json' },
 			'*.css': { loader: 'charto-plugin-css' }
 		},
 
