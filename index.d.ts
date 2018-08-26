@@ -1,3 +1,5 @@
+/// <reference path="types.d.ts" />
+
 export interface SystemConfig {
 	map: { [name: string]: string };
 	meta: { [name: string]: any };
@@ -10,4 +12,5 @@ export interface Charto {
 	systemConfig: SystemConfig;
 }
 
-export declare const charto: Charto;
+const charto: Charto;
+export = charto;
