@@ -43,13 +43,13 @@ charto.initSystem = function(config, done, firstConfig) {
 	/** Default path mappings for required loader modules. */
 
 	var paths = {
-		bluebird: [
-			'node_modules/bluebird/js/browser/bluebird.core.min.js',
-			'//unpkg.com/bluebird@3/js/browser/bluebird.core.min.js'
+		corejs: [
+			'node_modules/core-js-bundle/minified.js',
+			'https://unpkg.com/core-js@2/client/shim.min.js'
 		],
 		systemjs: [
 			'node_modules/systemjs/dist/system.js',
-			'//unpkg.com/systemjs@0.21/dist/system.js'
+			'https://unpkg.com/systemjs@0.21/dist/system.js'
 		],
 		config: configURL
 	};
@@ -58,8 +58,8 @@ charto.initSystem = function(config, done, firstConfig) {
 	  * synchronously). */
 
 	var deps = [
-		// 1. Load Bluebird if native Promise support is missing.
-		typeof(Promise) != 'function' && 'bluebird',
+		// 1. Load core-js if native Promise support is missing.
+		typeof(Promise) != 'function' && 'corejs',
 
 		// 2. Always load SystemJS. A future browser implementation may
 		// be incompatible with our Node.js module resolution patches.
@@ -200,7 +200,13 @@ charto.require = function(deps, paths, guess) {
 	}
 
 	function load(num, key, urls) {
+		var retried = false;
+		var uri = urls.shift();
+
 		function retry(err) {
+			if(retried) return;
+			retried = true;
+
 			if(!urls.length) throw(err);
 			load(num, key, urls);
 		}
@@ -209,11 +215,12 @@ charto.require = function(deps, paths, guess) {
 
 		xhr.onerror = retry;
 		xhr.onload = function() {
+			if(xhr.readyState != 4) return;
 			if(xhr.status != 200) return(retry(xhr.status));
 
 			// Cache successfully resolved addresses.
 			// This has redirections already applied.
-			cache[key] = xhr.responseURL;
+			cache[key] = xhr.responseURL || uri;
 			if(ss) ss.setItem(key, cache[key]);
 
 			// Store module code for execution in correct order.
@@ -227,7 +234,7 @@ charto.require = function(deps, paths, guess) {
 			}
 		};
 
-		xhr.open('GET', urls.shift(), true);
+		xhr.open('GET', uri, true);
 		xhr.send();
 	}
 
