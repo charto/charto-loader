@@ -1,6 +1,6 @@
 {
   "name": "charto-loader",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Loader tools for Charto style projects",
   "main": "index.js",
   "typings": "index.d.ts",
@@ -28,6 +28,7 @@
     "systemjs"
   ],
   "devDependencies": {
+    "cresolve": "^1.0.1",
     "uglify-js": "^3.4.7"
   }
 }
