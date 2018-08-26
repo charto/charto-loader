@@ -1,76 +1,54 @@
 # charto-loader
 
-This is a collection of loader scripts for Charto style projects:
+This is the most awesome JavaScript / TypeScript module loader. It combines the superpowers of:
 
-<dl>
-<dt>loader.js</dt>
-<dd>For browsers, loads <a href="https://github.com/systemjs/systemjs">SystemJS</a>,
-<a href="https://github.com/dojo/dojo">Dojo 1.x</a> and
-<a href="https://github.com/Microsoft/monaco-editor">Monaco</a>.</dd>
-<dt>dojo-loader.js</dt>
-<dd>Minimal shim for loading Dojo using SystemJS.</dd>
-<dt>dojo-require.js</dt>
-<dd>Minimal shim used by dojo-loader to support <code>require</code> inside Dojo when bundled.</dd>
-<dt>fixamd.js</dt>
-<dd>Renames <code>src</code> to the package name in paths inside TypeScript-compiled AMD bundles.</dd>
-<dt>alleamd.js</dt>
-<dd>Like <b>fixamd.js</b> but looks under <code>packages/node_modules/&lt;package name&gt;</code> to find the bundle.</dd>
-<dt>process.js</dt>
-<dd>Exports a Node.js <code>process</code> object with <code>NODE_ENV</code> set to <code>production</code>. Needed for example by React.</dd>
-<dt>process-dev.js</dt>
-<dd>Like <b>process.js</b> but <code>NODE_ENV</code> set to <code>development</code>.</dd>
-<dt>undefined.js</dt>
-<dd>Exports <code>undefined</code>, needed for bundling Dojo.</dd>
-</dl>
+- [SystemJS](https://github.com/systemjs/systemjs#readme) for in-browser development without any tooling.
+- [cresolve](https://github.com/charto/cresolve#readme) for fully automatic configuration using Node.js module resolution.
+
+## Features
+
+- Looks for `node_modules` and inside, in the same places Node.js would.
+- Automatic [UNPKG](https://unpkg.com/) fallback when a package is not yet installed.
+- Handles `browser` mappings in `package.json` files.
+- Transpiles ES6 using TypeScript compiler (by default).
+- Generates SystemJS configuration JSON to easily eliminate dependency on this library and switch to vanilla SystemJS.
 
 ## Usage
 
-In HTML code you can put:
+Import a main `App.ts` file from HTML like this:
 
 ```HTML
-<html><head>
-<script src="https://unpkg.com/charto-loader@0.1.1/loader.js"></script>
-<script type="text/javascript">
+<script src="//unpkg.com/charto-loader@1/loader.min.js"></script>
+<script>
 
-window.onload = function() {
-	// Use a bundle if available.
-	charto.production = true;
-
-	// Set bundle path. Could be omitted, this is the default.
-	charto.paths.bundle = 'dist/bundle';
-
-	// Load Bluebird, SystemJS and its config.
-	charto.initSystem(function() {
-		// Use SystemJS to load the app.
-		// Will look for the bundle first.
-		charto.start('dist/MyApp');
-	});
-};
+charto.initSystemTS(function() {
+	System.import('./App.ts');
+});
 
 </script>
 ```
 
-To use `fixamd`, run the TypeScript compiler from `scripts` in `package.json` like:
+You can write `./src/App` (`.ts` or `.tsx` extension is added) or `./dist/App` (`.js` extension is added) instead.
+If your project is not TypeScript (**but why?**), use `charto.initSystem` and
+add a first argument with a SystemJS configuration object or configuration file address,
+setting up a transpiler if necessary.
 
-```bash
-tsc && fixamd my-project ./index.js
+It loads [core-js](https://github.com/zloirock/core-js#readme) if `Promise` support is missing (mainly in IE 11) and
+[SystemJS](https://github.com/systemjs/systemjs#readme) from a CDN or under `node_modules` if present.
+[cresolve](https://github.com/charto/cresolve#readme) is included in the loader bundle.
+
+`loader.min.js` is the minified version, `loader.src.js` is for debugging without minification.
+
+To print the auto-generated SystemJS configuration, use:
+
+```TypeScript
+import charto from 'charto-loader';
+
+console.log(JSON.stringify(charto.systemConfig, null, '\t'));
 ```
-
-or:
-
-```bash
-tsc -p src && fixamd my-project
-```
-
-It will rename paths like `src/file` to `my-project/file` inside `./index.js`.
-If the second argument is omitted, it defaults to `dist/index-amd.js`.
-
-For [alle](https://github.com/boennemann/alle) projects, use `alleamd` instead.
-Called like above, it would patch `packages/node_modules/my-project/index.js` or
-`packages/node_modules/my-project/dist/index-amd.js`.
 
 # License
 
 [The MIT License](https://raw.githubusercontent.com/charto/charto-loader/master/LICENSE)
 
-Copyright (c) 2018 BusFaster Ltd
+Copyright (c) 2018- BusFaster Ltd
